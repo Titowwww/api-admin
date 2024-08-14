@@ -7,7 +7,7 @@ const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const app = express();
-const port = 6000;
+const port = 3000;
 
 // Middleware
 app.use(cors());
@@ -43,8 +43,8 @@ const swaggerOptions = {
         },
       },
       servers: [
-        { url: 'http://localhost:6000' },
-        { url: 'https://api-user-delta.vercel.app' }
+        { url: 'http://localhost:3000' },
+        { url: 'https://api-admin-delta.vercel.app' }
       ],
     },
     apis: ['server.js'], // Path to the API docs
@@ -305,7 +305,7 @@ app.get('/api/magang', async (req, res) => {
 app.get('/', (req, res) => {
     res.send('Hey this is my API running')
   });
-  
+
 // Jalankan server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
