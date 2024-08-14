@@ -68,6 +68,43 @@ const swaggerOptions = {
  * @swagger
  * components:
  *   schemas:
+ *     LoginRequest:
+ *       type: object
+ *       required:
+ *         - username
+ *         - password
+ *       properties:
+ *         username:
+ *           type: string
+ *         password:
+ *           type: string
+ */
+
+/**
+ * @swagger
+ * /login-admin:
+ *   post:
+ *     summary: Login as admin
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       401:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Internal server error
+ */
+
+  /**
+ * @swagger
+ * components:
+ *   schemas:
  *     Penelitian:
  *       type: object
  *       required:
@@ -224,6 +261,29 @@ const swaggerOptions = {
  *         description: Internal server error
  */
 
+// login-admin
+app.post('/login-admin', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const adminDoc = await db.collection('pelayanan').doc('admin').get();
+
+        if (!adminDoc.exists) {
+            return res.status(401).json({ message: 'Username atau Password salah' });
+        }
+
+        const adminData = adminDoc.data();
+
+        if (adminData.username === username && adminData.password === password) {
+            res.json({ message: 'Login Sukses' });
+        } else {
+            res.status(401).json({ message: 'Username atau Password salah' });
+        }
+    } catch (err) {
+        console.error('Error logging in:', err);
+        res.status(500).json({ message: 'Username atau Password salah' });
+    }
+});
 // Rute untuk mengambil data dari Firestore dan mengembalikan dalam format JSON
 app.get('/api/penelitian', async (req, res) => {
     try {
