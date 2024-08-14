@@ -44,7 +44,7 @@ const swaggerOptions = {
       },
       servers: [
         { url: 'http://localhost:3000' },
-        { url: 'https://api-admin-delta.vercel.app' }
+        { url: 'https://api-admin-one.vercel.app' }
       ],
     },
     apis: ['server.js'], // Path to the API docs
