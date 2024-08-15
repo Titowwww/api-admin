@@ -84,7 +84,7 @@ const swaggerOptions = {
  * @swagger
  * /login-admin:
  *   post:
- *     summary: Login as admin
+ *     summary: Masuk sebagai admin
  *     tags: [Admin]
  *     requestBody:
  *       required: true
@@ -169,7 +169,7 @@ const swaggerOptions = {
  * @swagger
  * /api/penelitian:
  *   get:
- *     summary: Get all research submissions
+ *     summary: Mengambil semua ajuan penelitian
  *     tags: [Penelitian]
  *     responses:
  *       200:
@@ -246,7 +246,7 @@ const swaggerOptions = {
  * @swagger
  * /api/magang:
  *   get:
- *     summary: Get all internship submissions
+ *     summary: Mengambil semua ajuan magang
  *     tags: [Magang]
  *     responses:
  *       200:
@@ -261,6 +261,133 @@ const swaggerOptions = {
  *         description: Internal server error
  */
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateNomorSuratRequest:
+ *       type: object
+ *       required:
+ *         - id
+ *         - nomorSurat
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: ID dokumen di Firestore
+ *         nomorSurat:
+ *           type: string
+ *           description: Nomor surat yang akan ditambahkan atau diperbarui
+ */
+
+/**
+ * @swagger
+ * /api/penelitian/update-nomor-surat:
+ *   post:
+ *     summary: Tambahkan atau perbarui nomor surat pada dokumen penelitian
+ *     tags: [Penelitian]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateNomorSuratRequest'
+ *     responses:
+ *       200:
+ *         description: Nomor Surat berhasil diperbarui atau ditambahkan
+ *       400:
+ *         description: ID dan Nomor Surat diperlukan
+ *       404:
+ *         description: Dokumen tidak ditemukan
+ *       500:
+ *         description: Kesalahan Server Internal
+ */
+
+/**
+ * @swagger
+ * /api/magang/update-nomor-surat:
+ *   post:
+ *     summary: Tambahkan atau perbarui nomor surat pada dokumen magang
+ *     tags: [Magang]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateNomorSuratRequest'
+ *     responses:
+ *       200:
+ *         description: Nomor Surat berhasil diperbarui atau ditambahkan
+ *       400:
+ *         description: ID dan Nomor Surat diperlukan
+ *       404:
+ *         description: Dokumen tidak ditemukan
+ *       500:
+ *         description: Kesalahan Server Internal
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateStatusRequest:
+ *       type: object
+ *       required:
+ *         - id
+ *         - status
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The ID of the document to be updated.
+ *         status:
+ *           type: string
+ *           enum: [Belum Diproses, Sedang Diproses, Sudah Selesai]
+ *           description: The new status to be set.
+ */
+/**
+ * @swagger
+ * /api/penelitian/update-status:
+ *   post:
+ *     summary: Update status ajuan penelitian
+ *     tags: [Penelitian]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateStatusRequest'
+ *     responses:
+ *       200:
+ *         description: Status berhasil diperbarui
+ *       400:
+ *         description: ID dan Status diperlukan
+ *       404:
+ *         description: Dokumen tidak ditemukan
+ *       500:
+ *         description: Terjadi kesalahan saat memperbarui status
+ */
+
+/**
+ * @swagger
+ * /api/magang/update-status:
+ *   post:
+ *     summary: Update status ajuan magang
+ *     tags: [Magang]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateStatusRequest'
+ *     responses:
+ *       200:
+ *         description: Status berhasil diperbarui
+ *       400:
+ *         description: ID dan Status diperlukan
+ *       404:
+ *         description: Dokumen tidak ditemukan
+ *       500:
+ *         description: Terjadi kesalahan saat memperbarui status
+ */
 // login-admin
 app.post('/login-admin', async (req, res) => {
     const { username, password } = req.body;
@@ -359,6 +486,107 @@ app.get('/api/magang', async (req, res) => {
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Endpoint untuk memperbarui atau menambahkan Nomor Surat pada penelitian
+app.post('/api/penelitian/update-nomor-surat', async (req, res) => {
+    const { id, nomorSurat } = req.body;
+
+    if (!id || !nomorSurat) {
+        return res.status(400).json({ message: 'ID dan Nomor Surat diperlukan' });
+    }
+
+    try {
+        const docRef = db.collection('pelayanan').doc('penelitian').collection('data').doc(id);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
+        }
+
+        // Menambahkan atau memperbarui nomorSurat
+        await docRef.update({ nomorSurat });
+        res.json({ message: 'Nomor Surat berhasil diperbarui atau ditambahkan' });
+    } catch (err) {
+        console.error('Error updating or adding document:', err);
+        res.status(500).json({ message: 'Kesalahan Server Internal' });
+    }
+});
+
+// Endpoint untuk memperbarui atau menambahkan Nomor Surat pada magang
+app.post('/api/magang/update-nomor-surat', async (req, res) => {
+    const { id, nomorSurat } = req.body;
+
+    if (!id || !nomorSurat) {
+        return res.status(400).json({ message: 'ID dan Nomor Surat diperlukan' });
+    }
+
+    try {
+        const docRef = db.collection('pelayanan').doc('magang').collection('magang').doc(id);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
+        }
+
+        // Menambahkan atau memperbarui nomorSurat
+        await docRef.update({ nomorSurat });
+        res.json({ message: 'Nomor Surat berhasil diperbarui atau ditambahkan' });
+    } catch (err) {
+        console.error('Error updating or adding document:', err);
+        res.status(500).json({ message: 'Kesalahan Server Internal' });
+    }
+});
+
+// Endpoint untuk memperbarui status berdasarkan ID
+app.post('/api/penelitian/update-status', async (req, res) => {
+    const { id, status } = req.body;
+
+    if (!id || !status) {
+        return res.status(400).json({ message: 'ID dan Status diperlukan' });
+    }
+
+    try {
+        // Pilih koleksi 'penelitian'
+        const docRef = db.collection('pelayanan').doc('penelitian').collection('data').doc(id);  // Sesuaikan koleksi di sini
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
+        }
+
+        // Update status di dokumen
+        await docRef.update({ statusAjuan: status });  // Sesuaikan field status yang ada di dokumen
+        res.json({ message: 'Status berhasil diperbarui' });
+    } catch (err) {
+        console.error('Error updating status:', err);
+        res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui status' });
+    }
+});
+
+app.post('/api/magang/update-status', async (req, res) => {
+    const { id, status } = req.body;
+
+    if (!id || !status) {
+        return res.status(400).json({ message: 'ID dan Status diperlukan' });
+    }
+
+    try {
+        // Pilih koleksi 'magang'
+        const docRef = db.collection('pelayanan').doc('magang').collection('magang').doc(id);  // Sesuaikan koleksi di sini
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
+        }
+
+        // Update status di dokumen
+        await docRef.update({ statusAjuan: status });  // Sesuaikan field status yang ada di dokumen
+        res.json({ message: 'Status berhasil diperbarui' });
+    } catch (err) {
+        console.error('Error updating status:', err);
+        res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui status' });
     }
 });
 
