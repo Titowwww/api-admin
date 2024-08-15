@@ -375,8 +375,10 @@ app.get('/api/penelitian', async (req, res) => {
         
         const items = snapshot.docs.map((doc) => {
             const data = doc.data();
+            const id = doc.id;  // Mengambil ID dokumen
 
             return {
+                id,  // Menambahkan ID ke objek yang dikembalikan
                 letterNumber: data.letterNumber,
                 name: data.name,
                 researcherName : data.researcherName,
@@ -414,8 +416,10 @@ app.get('/api/magang', async (req, res) => {
         
         const items = snapshot.docs.map((doc) => {
             const data = doc.data();
+            const id = doc.id;  // Mengambil ID dokumen
 
             return {
+                id,  // Menambahkan ID ke objek yang dikembalikan
                 letterNumber : data.letterNumber,
                 applicantsName : data.applicantsName,
                 address : data.address,
@@ -444,6 +448,7 @@ app.get('/api/magang', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 // Endpoint untuk memperbarui Nomor Surat dan/atau Status pada penelitian
 app.post('/api/penelitian/update', async (req, res) => {
