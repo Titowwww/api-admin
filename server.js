@@ -2,6 +2,7 @@ const express = require('express');
 const admin = require('firebase-admin');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -29,6 +30,10 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
+
+// Tambahkan ini untuk JWT Secret
+const JWT_SECRET = process.env.JWT_SECRET;
+
 
 // Swagger Configuration
 const swaggerOptions = {
@@ -99,6 +104,49 @@ const swaggerOptions = {
  *         description: Invalid credentials
  *       500:
  *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /api/protected-route:
+ *   get:
+ *     summary: Mengakses rute yang dilindungi (Protected Route)
+ *     description: Endpoint ini hanya dapat diakses oleh pengguna yang telah diautentikasi dengan token JWT.
+ *     tags: [Protected]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Access granted to protected route.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     username:
+ *                       type: string
+ *                       example: admin
+ *       401:
+ *         description: Invalid token
+ *       403:
+ *         description: A token is required for authentication
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
   /**
@@ -325,7 +373,7 @@ const swaggerOptions = {
  * @swagger
  * /api/magang/update:
  *   post:
- *     summary: UUpdate Nomor Surat dan/atau Status Ajuan Magang
+ *     summary: Update Nomor Surat dan/atau Status Ajuan Magang
  *     tags: [Magang]
  *     requestBody:
  *       required: true
@@ -345,6 +393,7 @@ const swaggerOptions = {
  */
 
 // login-admin
+// login-admin dengan JWT
 app.post('/login-admin', async (req, res) => {
     const { username, password } = req.body;
 
@@ -358,15 +407,46 @@ app.post('/login-admin', async (req, res) => {
         const adminData = adminDoc.data();
 
         if (adminData.username === username && adminData.password === password) {
-            res.json({ message: 'Login Sukses' });
+            // Jika login sukses, buat token
+            const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
+
+            res.json({ 
+                message: 'Login Sukses', 
+                token 
+            });
         } else {
             res.status(401).json({ message: 'Username atau Password salah' });
         }
     } catch (err) {
         console.error('Error logging in:', err);
-        res.status(500).json({ message: 'Username atau Password salah' });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
+// Middleware untuk memverifikasi token
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
+        return res.status(403).json({ message: 'A token is required for authentication' });
+    }
+
+    const token = authHeader.split(' ')[1]; // Mengambil token setelah 'Bearer'
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid Token' });
+    }
+    return next();
+};
+
+// Rute yang menggunakan token JWT harus menggunakan middleware ini
+app.get('/api/protected-route', verifyToken, (req, res) => {
+    res.json({ message: 'This is a protected route', user: req.user });
+});
+
 // Rute untuk mengambil data dari Firestore dan mengembalikan dalam format JSON
 app.get('/api/penelitian', async (req, res) => {
     try {
@@ -518,3 +598,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
