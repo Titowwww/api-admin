@@ -532,8 +532,8 @@ app.get('/api/magang', async (req, res) => {
 
 // Endpoint untuk memperbarui Nomor Surat dan/atau Status pada penelitian
 app.post('/api/penelitian/update', async (req, res) => {
-    const { id } = req.params;  // Mengambil ID dari URL
-    const { nomorSurat, status } = req.body;
+    console.log("Request body:", req.body); // Debugging log
+    const { id, nomorSurat, status } = req.body;
     console.log("ID received:", id); // Debugging log
 
     if (!id || (!nomorSurat && !status)) {
@@ -564,6 +564,7 @@ app.post('/api/penelitian/update', async (req, res) => {
 
 // Endpoint untuk memperbarui Nomor Surat dan/atau Status pada magang
 app.post('/api/magang/update', async (req, res) => {
+    console.log("Request body:", req.body); // Debugging log
     const { id, nomorSurat, status } = req.body;
     console.log("ID received:", id); // Debugging log
 
