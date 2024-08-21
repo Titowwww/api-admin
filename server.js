@@ -211,6 +211,11 @@ const swaggerOptions = {
  *         timestamp:
  *           type: string
  *           format: date-time
+ *         nomorSurat:
+ *           type: string
+ *         statusAjuan:
+ *           type: string
+ *           enum: [Belum Diproses, Sedang Diproses, Sudah Selesai]
  */
 
 /**
@@ -288,6 +293,11 @@ const swaggerOptions = {
  *         timestamp:
  *           type: string
  *           format: date-time
+ *         nomorSurat:
+ *           type: string
+ *         statusAjuan:
+ *           type: string
+ *           enum: [Belum Diproses, Sedang Diproses, Sudah Selesai]
  */
 
 /**
@@ -324,7 +334,7 @@ const swaggerOptions = {
  *         nomorSurat:
  *           type: string
  *           description: The new Nomor Surat to be set. Optional.
- *         status:
+ *         statusAjuan:
  *           type: string
  *           enum: [Belum Diproses, Sedang Diproses, Sudah Selesai]
  *           description: The new status to be set. Optional.
@@ -340,7 +350,7 @@ const swaggerOptions = {
  *         nomorSurat:
  *           type: string
  *           description: The new Nomor Surat to be set. Optional.
- *         status:
+ *         statusAjuan:
  *           type: string
  *           enum: [Belum Diproses, Sedang Diproses, Sudah Selesai]
  *           description: The new status to be set. Optional.
@@ -537,10 +547,10 @@ app.get('/api/magang', async (req, res) => {
 // Endpoint untuk memperbarui Nomor Surat dan/atau Status pada penelitian
 app.post('/api/penelitian/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
-    const { id, nomorSurat, status } = req.body;
+    const { id, nomorSurat, statusAjuan } = req.body;
     console.log("ID received:", id); // Debugging log
 
-    if (!id || (!nomorSurat && !status)) {
+    if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
     }
 
@@ -555,7 +565,7 @@ app.post('/api/penelitian/update', async (req, res) => {
         // Menyiapkan objek pembaruan
         const updateData = {};
         if (nomorSurat) updateData.nomorSurat = nomorSurat;
-        if (status) updateData.statusAjuan = status;
+        if (statusAjuan) updateData.statusAjuan = statusAjuan;
 
         // Melakukan pembaruan pada dokumen
         await docRef.update(updateData);
@@ -569,10 +579,10 @@ app.post('/api/penelitian/update', async (req, res) => {
 // Endpoint untuk memperbarui Nomor Surat dan/atau Status pada magang
 app.post('/api/magang/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
-    const { id, nomorSurat, status } = req.body;
+    const { id, nomorSurat, statusAjuan } = req.body;
     console.log("ID received:", id); // Debugging log
 
-    if (!id || (!nomorSurat && !status)) {
+    if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
     }
 
@@ -587,7 +597,7 @@ app.post('/api/magang/update', async (req, res) => {
         // Menyiapkan objek pembaruan
         const updateData = {};
         if (nomorSurat) updateData.nomorSurat = nomorSurat;
-        if (status) updateData.statusAjuan = status;
+        if (statusAjuan) updateData.statusAjuan = statusAjuan;
 
         // Melakukan pembaruan pada dokumen
         await docRef.update(updateData);
