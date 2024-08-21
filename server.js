@@ -579,7 +579,11 @@ app.post('/api/penelitian/update', async (req, res) => {
 app.post('/api/magang/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
     const { id, nomorSurat, statusAjuan } = req.body;
-    console.log("ID received:", id); // Logging untuk melihat ID yang diterima
+    
+    // Logging tambahan untuk memastikan data yang diterima
+    console.log("Received ID:", id);
+    console.log("Received Nomor Surat:", nomorSurat);
+    console.log("Received Status Ajuan:", statusAjuan);
     
     if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
