@@ -548,7 +548,6 @@ app.get('/api/magang', async (req, res) => {
 app.post('/api/penelitian/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
     const { id, nomorSurat, statusAjuan } = req.body;
-    console.log("ID received:", id); // Debugging log
 
     if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
@@ -580,7 +579,6 @@ app.post('/api/penelitian/update', async (req, res) => {
 app.post('/api/magang/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
     const { id, nomorSurat, statusAjuan } = req.body;
-    console.log("ID received:", id); // Debugging log
 
     if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
@@ -598,6 +596,9 @@ app.post('/api/magang/update', async (req, res) => {
         const updateData = {};
         if (nomorSurat) updateData.nomorSurat = nomorSurat;
         if (statusAjuan) updateData.statusAjuan = statusAjuan;
+        console.log("Nomor Surat:", nomorSurat);
+        console.log("Status Ajuan:", statusAjuan);
+
 
         // Melakukan pembaruan pada dokumen
         await docRef.update(updateData);
