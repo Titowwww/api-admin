@@ -477,7 +477,9 @@ app.get('/api/penelitian', async (req, res) => {
                 ktpUrl: data.ktpUrl,  // Menggunakan URL publik langsung
                 suratPengantarUrl: data.suratPengantarUrl,  // Menggunakan URL publik langsung
                 proposalUrl: data.proposalUrl,  // Menggunakan URL publik langsung
-                timestamp: data.timestamp.toDate()
+                timestamp: data.timestamp.toDate(),
+                statusAjuan: data.statusAjuan,
+                nomorSurat: data.nomorSurat,
             };
         });
 
@@ -517,7 +519,9 @@ app.get('/api/magang', async (req, res) => {
                 ktpUrl: data.ktpUrl,  // Menggunakan URL publik langsung
                 suratPermohonanUrl: data.suratPermohonanUrl,  // Menggunakan URL publik langsung
                 proposalUrl: data.proposalUrl,  // Menggunakan URL publik langsung
-                timestamp: data.timestamp.toDate()
+                timestamp: data.timestamp.toDate(),
+                statusAjuan: data.statusAjuan,
+                nomorSurat: data.nomorSurat,
             };
         });
 
