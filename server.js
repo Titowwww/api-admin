@@ -580,9 +580,9 @@ app.post('/api/magang/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
     const { id, nomorSurat, statusAjuan } = req.body;
     
-    if (!id || (!nomorSurat && !statusAjuan)) {
+    /*if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
-    }
+    }*/
 
     try {
         const docRef = db.collection('pelayanan').doc('magang').collection('magang').doc(id);
