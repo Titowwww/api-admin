@@ -579,10 +579,11 @@ app.post('/api/penelitian/update', async (req, res) => {
 app.post('/api/magang/update', async (req, res) => {
     console.log("Request body:", req.body); // Debugging log
     const { id, nomorSurat, statusAjuan } = req.body;
+    console.log("ID received:", id); // Logging untuk melihat ID yang diterima
     
-    /*if (!id || (!nomorSurat && !statusAjuan)) {
+    if (!id || (!nomorSurat && !statusAjuan)) {
         return res.status(400).json({ message: 'ID dan setidaknya satu dari Nomor Surat atau Status diperlukan' });
-    }*/
+    }
 
     try {
         const docRef = db.collection('pelayanan').doc('magang').collection('magang').doc(id);
@@ -605,7 +606,7 @@ app.post('/api/magang/update', async (req, res) => {
         res.json({ message: 'Dokumen berhasil diperbarui' });
         console.log("Parsed ID:", id);
         console.log("Parsed nomorSurat:", nomorSurat);
-        console.log("Parsed statusAjuan:", statusAjuan)
+        console.log("Parsed statusAjuan:", statusAjuan);
     } catch (err) {
         console.error('Error updating document:', err);
         res.status(500).json({ message: 'Kesalahan Server Internal' });
