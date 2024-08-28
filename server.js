@@ -149,6 +149,34 @@ const swaggerOptions = {
  *       bearerFormat: JWT
  */
 
+/**
+ * @swagger
+ * /profile:
+ *   get:
+ *     summary: Mengambil username pengguna yang sedang login
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Berhasil mendapatkan username
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username pengguna yang sedang login
+ *                   example: "pelayanan1"
+ *       401:
+ *         description: Token tidak valid atau tidak ada token
+ *       403:
+ *         description: Token diperlukan untuk otentikasi
+ *       500:
+ *         description: Kesalahan server internal
+ */
+
   /**
  * @swagger
  * components:
@@ -402,7 +430,6 @@ const swaggerOptions = {
  *         description: Kesalahan Server Internal
  */
 
-// login-admin
 // login-admin dengan JWT
 app.post('/login-admin', async (req, res) => {
     const { username, password } = req.body;
@@ -455,6 +482,22 @@ const verifyToken = (req, res, next) => {
 // Rute yang menggunakan token JWT harus menggunakan middleware ini
 app.get('/api/protected-route', verifyToken, (req, res) => {
     res.json({ message: 'This is a protected route', user: req.user });
+});
+
+// Endpoint untuk mengambil username pengguna yang sedang login
+app.get('/profile', verifyToken, (req, res) => {
+    try {
+        // Ambil username dari token JWT yang terverifikasi
+        const username = req.user.username;
+
+        // Kembalikan username sebagai respon
+        res.json({
+            username: username
+        });
+    } catch (err) {
+        console.error('Error fetching username:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 // Rute untuk mengambil data dari Firestore dan mengembalikan dalam format JSON
