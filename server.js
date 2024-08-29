@@ -460,22 +460,6 @@ app.post('/login-admin', async (req, res) => {
     }
 });
 
-// Endpoint untuk mengambil username pengguna yang sedang login
-app.get('/profile', verifyToken, (req, res) => {
-    try {
-        // Ambil username dari token JWT yang terverifikasi
-        const username = req.user.username;
-
-        // Kembalikan username sebagai respon
-        res.json({
-            username: username
-        });
-    } catch (err) {
-        console.error('Error fetching username:', err);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
 // Middleware untuk memverifikasi token
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -494,6 +478,22 @@ const verifyToken = (req, res, next) => {
     }
     return next();
 };
+
+// Endpoint untuk mengambil username pengguna yang sedang login
+app.get('/profile', verifyToken, (req, res) => {
+    try {
+        // Ambil username dari token JWT yang terverifikasi
+        const username = req.user.username;
+
+        // Kembalikan username sebagai respon
+        res.json({
+            username: username
+        });
+    } catch (err) {
+        console.error('Error fetching username:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 
 // Rute yang menggunakan token JWT harus menggunakan middleware ini
 app.get('/api/protected-route', verifyToken, (req, res) => {
@@ -610,8 +610,11 @@ app.post('/api/penelitian/update', async (req, res) => {
         if (statusAjuan) updateData.statusAjuan = statusAjuan;
 
         // Melakukan pembaruan pada dokumen
-        await docRef.update(updateData);
-        res.json({ message: 'Dokumen berhasil diperbarui' });
+        const updatedDoc = await docRef.get(); // Ambil dokumen yang diperbarui
+        res.json({ 
+            message: 'Dokumen berhasil diperbarui',
+            data: updatedDoc.data() // Mengembalikan data yang diperbarui
+        });
     } catch (err) {
         console.error('Error updating document:', err);
         res.status(500).json({ message: 'Kesalahan Server Internal' });
@@ -649,10 +652,11 @@ app.post('/api/magang/update', async (req, res) => {
 
 
         // Melakukan pembaruan pada dokumen
-        await docRef.update(updateData);
-        res.json({ message: 'Dokumen berhasil diperbarui',
-            id: id,
-         });
+        const updatedDoc = await docRef.get(); // Ambil dokumen yang diperbarui
+        res.json({ 
+            message: 'Dokumen berhasil diperbarui',
+            data: updatedDoc.data() // Mengembalikan data yang diperbarui
+        });
     } catch (err) {
         console.error('Error updating document:', err);
         res.status(500).json({ message: 'Kesalahan Server Internal' });
