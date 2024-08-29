@@ -460,6 +460,22 @@ app.post('/login-admin', async (req, res) => {
     }
 });
 
+// Endpoint untuk mengambil username pengguna yang sedang login
+app.get('/profile', verifyToken, (req, res) => {
+    try {
+        // Ambil username dari token JWT yang terverifikasi
+        const username = req.user.username;
+
+        // Kembalikan username sebagai respon
+        res.json({
+            username: username
+        });
+    } catch (err) {
+        console.error('Error fetching username:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 // Middleware untuk memverifikasi token
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -482,22 +498,6 @@ const verifyToken = (req, res, next) => {
 // Rute yang menggunakan token JWT harus menggunakan middleware ini
 app.get('/api/protected-route', verifyToken, (req, res) => {
     res.json({ message: 'This is a protected route', user: req.user });
-});
-
-// Endpoint untuk mengambil username pengguna yang sedang login
-app.get('/profile', verifyToken, (req, res) => {
-    try {
-        // Ambil username dari token JWT yang terverifikasi
-        const username = req.user.username;
-
-        // Kembalikan username sebagai respon
-        res.json({
-            username: username
-        });
-    } catch (err) {
-        console.error('Error fetching username:', err);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
 });
 
 // Rute untuk mengambil data dari Firestore dan mengembalikan dalam format JSON
