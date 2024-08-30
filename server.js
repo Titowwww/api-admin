@@ -449,7 +449,9 @@ app.post('/login-admin', async (req, res) => {
 
             res.json({ 
                 message: 'Login Sukses', 
-                token 
+                token,
+                iat : iatReadable,
+                exp : expReadable
             });
         } else {
             res.status(401).json({ message: 'Username atau Password salah' });
