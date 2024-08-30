@@ -446,7 +446,14 @@ app.post('/login-admin', async (req, res) => {
         if (adminData.username === username && adminData.password === password) {
             // Jika login sukses, buat token
             const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
+            
+            // Decode token untuk mendapatkan iat dan exp
+            const decodedToken = jwt.decode(token);
 
+            // Konversi iat dan exp menjadi format tanggal dan waktu yang mudah dibaca
+            const iatReadable = new Date(decodedToken.iat * 1000).toLocaleString();
+            const expReadable = new Date(decodedToken.exp * 1000).toLocaleString();
+            
             res.json({ 
                 message: 'Login Sukses', 
                 token,
