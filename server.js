@@ -16,12 +16,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Firebase Initialization
-const serviceAccount = require ("/.govservice-2024-firebase-adminsdk-sx52a-41b1d6e295.json")
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'gs://govservice-2024.appspot.com'
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    }),
+    storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
+  });
+}
 
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
