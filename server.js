@@ -16,12 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Firebase Initialization
-const serviceAccount = {
-    type: "service_account",
-    project_id: process.env.FIREBASE_PROJECT_ID,
-    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    client_email: process.env.FIREBASE_CLIENT_EMAIL,
-};
+const serviceAccount = require ("/.govservice-2024-firebase-adminsdk-sx52a-41b1d6e295.json")
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -33,7 +28,6 @@ const bucket = admin.storage().bucket();
 
 // Tambahkan ini untuk JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET;
-
 
 // Swagger Configuration
 const swaggerOptions = {
